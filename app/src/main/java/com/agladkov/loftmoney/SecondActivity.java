@@ -77,7 +77,9 @@ public class SecondActivity extends AppCompatActivity {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().addItem(value, name, "expense")
+                String token = getSharedPreferences(getString(R.string.app_name), 0).getString(LoftApp.TOKEN_KEY, "");
+
+                Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().addItem(token, value, name, "expense")
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Action() {

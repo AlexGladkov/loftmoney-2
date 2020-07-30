@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -14,7 +13,6 @@ import com.agladkov.loftmoney.cells.money.MoneyAdapter;
 import com.agladkov.loftmoney.cells.money.MoneyAdapterClick;
 import com.agladkov.loftmoney.cells.money.MoneyCellModel;
 import com.agladkov.loftmoney.remote.MoneyItem;
-import com.agladkov.loftmoney.remote.MoneyResponse;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -75,14 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void generateExpenses() {
         final List<MoneyCellModel> moneyCellModels = new ArrayList<>();
+        String token = getSharedPreferences(getString(R.string.app_name), 0).getString(LoftApp.TOKEN_KEY, "");
 
-        Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().getItems("expense")
+        Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().getItems(token, "expense")
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<MoneyResponse>() {
+                .subscribe(new Consumer<List<MoneyItem>>() {
                     @Override
-                    public void accept(MoneyResponse moneyResponse) throws Exception {
-                        for (MoneyItem moneyItem : moneyResponse.getMoneyItemList()) {
+                    public void accept(List<MoneyItem> moneyItems) throws Exception {
+                        for (MoneyItem moneyItem : moneyItems) {
                             moneyCellModels.add(MoneyCellModel.getInstance(moneyItem));
                         }
 
