@@ -9,6 +9,7 @@
         android:id="@+id/logoView"
         android:layout_width="174dp"
         android:layout_height="153dp"
+        android:src="@drawable/img_logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

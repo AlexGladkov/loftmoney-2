@@ -14,7 +14,6 @@ import com.agladkov.loftmoney.cells.money.MoneyAdapter;
 import com.agladkov.loftmoney.cells.money.MoneyAdapterClick;
 import com.agladkov.loftmoney.cells.money.MoneyCellModel;
 import com.agladkov.loftmoney.remote.MoneyItem;
-import com.agladkov.loftmoney.remote.MoneyResponse;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -75,25 +74,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void generateExpenses() {
         final List<MoneyCellModel> moneyCellModels = new ArrayList<>();
+        String token = getSharedPreferences(getString(R.string.app_name), 0).getString("token", "");
 
-        Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().getItems("expense")
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<MoneyResponse>() {
-                    @Override
-                    public void accept(MoneyResponse moneyResponse) throws Exception {
-                        for (MoneyItem moneyItem : moneyResponse.getMoneyItemList()) {
-                            moneyCellModels.add(MoneyCellModel.getInstance(moneyItem));
-                        }
+        Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().getItems(token, "expense")
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<List<MoneyItem>>() {
+                @Override
+                public void accept(List<MoneyItem> moneyItems) throws Exception {
+                    for (MoneyItem moneyItem : moneyItems) {
+                        moneyCellModels.add(MoneyCellModel.getInstance(moneyItem));
+                    }
 
-                        moneyAdapter.setData(moneyCellModels);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e("TAG", "Error " + throwable.getLocalizedMessage());
-                    }
-                });
+                    moneyAdapter.setData(moneyCellModels);
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+                    Log.e("TAG", "Error " + throwable.getLocalizedMessage());
+                }
+            });
 
         compositeDisposable.add(disposable);
     }
