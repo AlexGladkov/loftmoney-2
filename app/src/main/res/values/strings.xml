@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Loftmoney</string>
+    <string name="welcome_enter">Войти</string>
 </resources>
