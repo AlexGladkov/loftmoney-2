@@ -1,18 +1,18 @@
 package com.agladkov.loftmoney;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
-import com.agladkov.loftmoney.cells.money.MoneyAdapter;
-import com.agladkov.loftmoney.cells.money.MoneyAdapterClick;
-import com.agladkov.loftmoney.cells.money.MoneyCellModel;
-import com.agladkov.loftmoney.remote.MoneyItem;
+import com.agladkov.loftmoney.cells.MoneyCellAdapter;
+import com.agladkov.loftmoney.cells.MoneyItem;
+import com.agladkov.loftmoney.remote.MoneyRemoteItem;
+import com.agladkov.loftmoney.remote.MoneyResponse;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -26,84 +26,66 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
-    MoneyAdapter moneyAdapter;
-    FloatingActionButton floatingActionButton;
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private MoneyCellAdapter moneyCellAdapter = new MoneyCellAdapter();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        floatingActionButton = findViewById(R.id.addNewExpense);
-        recyclerView = findViewById(R.id.costsRecyclerView);
-        moneyAdapter = new MoneyAdapter();
-        moneyAdapter.setMoneyAdapterClick(new MoneyAdapterClick() {
-            @Override
-            public void onMoneyClick(MoneyCellModel moneyCellModel) {
+        RecyclerView recyclerView = findViewById(R.id.itemsView);
+        recyclerView.setAdapter(moneyCellAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL,
+                false));
 
-            }
-
-            @Override
-            public void onValueClick(String value) {
-
-            }
+        FloatingActionButton addNewIncomeView = findViewById(R.id.addNewExpense);
+        addNewIncomeView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), AddMoneyActivity.class);
+            startActivity(intent);
         });
-
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        recyclerView.setAdapter(moneyAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
-            LinearLayoutManager.VERTICAL, false));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        generateExpenses();
+        generateData();
     }
 
-    private void generateExpenses() {
-        final List<MoneyCellModel> moneyCellModels = new ArrayList<>();
-        String token = getSharedPreferences(getString(R.string.app_name), 0).getString(LoftApp.TOKEN_KEY, "");
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
+    }
 
-        Disposable disposable = ((LoftApp) getApplication()).getMoneyApi().getItems(token, "expense")
-                .subscribeOn(Schedulers.computation())
+    private void generateData() {
+//        moneyItems.add(new MoneyItem("PS4", "1500$"));
+//        moneyItems.add(new MoneyItem("Salary", "50000$"));
+//        moneyItems.add(new MoneyItem("Taxes", "15000$"));
+//        moneyItems.add(new MoneyItem("Medical Care", "8000$"));
+//
+//        moneyCellAdapter.setData(moneyItems);
+
+        Disposable disposable = ((LoftApp) getApplication()).moneyApi.getMoneyItems("income")
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<MoneyItem>>() {
-                    @Override
-                    public void accept(List<MoneyItem> moneyItems) throws Exception {
-                        for (MoneyItem moneyItem : moneyItems) {
-                            moneyCellModels.add(MoneyCellModel.getInstance(moneyItem));
+                .subscribe(moneyResponse -> {
+                    if (moneyResponse.getStatus().equals("success")) {
+                        List<MoneyItem> moneyItems = new ArrayList<>();
+
+                        for (MoneyRemoteItem moneyRemoteItem : moneyResponse.getMoneyItemsList()) {
+                            moneyItems.add(MoneyItem.getInstance(moneyRemoteItem));
                         }
 
-                        moneyAdapter.setData(moneyCellModels);
+                        moneyCellAdapter.setData(moneyItems);
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_lost), Toast.LENGTH_LONG).show();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e("TAG", "Error " + throwable.getLocalizedMessage());
-                    }
+                }, throwable -> {
+                    Toast.makeText(getApplicationContext(), throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 });
 
         compositeDisposable.add(disposable);
-    }
-
-    private List<MoneyCellModel> generateIncomes() {
-        List<MoneyCellModel> moneyCellModels = new ArrayList<>();
-        moneyCellModels.add(new MoneyCellModel("Зарплата.Июнь", "70000 ₽", R.color.incomeColor));
-        moneyCellModels.add(new MoneyCellModel("Премия", "7000 ₽", R.color.incomeColor));
-        moneyCellModels.add(new MoneyCellModel("Олег наконец-то вернул долг",
-            "300000 ₽", R.color.incomeColor));
-
-        return moneyCellModels;
     }
 }

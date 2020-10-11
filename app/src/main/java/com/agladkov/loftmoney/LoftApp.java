@@ -1,10 +1,7 @@
 package com.agladkov.loftmoney;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
-
-import com.agladkov.loftmoney.remote.AuthApi;
 import com.agladkov.loftmoney.remote.MoneyApi;
 
 import okhttp3.OkHttpClient;
@@ -15,10 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoftApp extends Application {
 
-    private MoneyApi moneyApi;
-    private AuthApi authApi;
-
-    public static String TOKEN_KEY = "token";
+    public MoneyApi moneyApi;
 
     @Override
     public void onCreate() {
@@ -36,24 +30,12 @@ public class LoftApp extends Application {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://verdant-violet.glitch.me/")
                 .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("https://loftschool.com/android-api/basic/v1/")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
 
         moneyApi = retrofit.create(MoneyApi.class);
-        authApi = retrofit.create(AuthApi.class);
-    }
-
-    public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences(getString(R.string.app_name), 0);
-    }
-
-    public MoneyApi getMoneyApi() {
-        return moneyApi;
-    }
-    public AuthApi getAuthApi() {
-        return authApi;
     }
 }

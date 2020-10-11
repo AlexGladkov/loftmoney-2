@@ -19,13 +19,6 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkToken() {
-        String token = ((LoftApp) getApplication()).getSharedPreferences().getString(LoftApp.TOKEN_KEY, "");
-
-        if (TextUtils.isEmpty(token)) {
-            routeToLogin();
-        } else {
-            routeToMain();
-        }
     }
 
     private void routeToMain() {
