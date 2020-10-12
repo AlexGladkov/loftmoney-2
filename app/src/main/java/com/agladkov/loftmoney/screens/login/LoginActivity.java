@@ -1,57 +1,59 @@
 package com.agladkov.loftmoney.screens.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.agladkov.loftmoney.MainActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.agladkov.loftmoney.LoftApp;
 import com.agladkov.loftmoney.R;
+import com.agladkov.loftmoney.screens.main.MainActivity;
 
-public class LoginActivity extends AppCompatActivity implements LoginView {
+public class LoginActivity extends AppCompatActivity {
 
-    Button loginButtonView;
-
-    private LoginPresenter loginPresenter = new LoginPresenterImpl();
+    private LoginViewModel loginViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        loginButtonView = findViewById(R.id.loginButtonView);
-        loginPresenter.attachViewState(this);
-
-        configureButton();
+        configureViews();
+        configureViewModel();
     }
 
-    @Override
-    protected void onPause() {
-        loginPresenter.disposeRequests();
-        super.onPause();
+    private void configureViews() {
+        AppCompatButton loginEnterView = findViewById(R.id.loginEnterView);
+
+        loginEnterView.setOnClickListener(v -> {
+            loginViewModel.makeLogin(((LoftApp) getApplication()).authApi);
+        });
     }
 
-    private void configureButton() {
-    }
+    private void configureViewModel() {
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-    @Override
-    public void toggleSending(boolean isActive) {
-        loginButtonView.setVisibility(isActive ? View.GONE : View.VISIBLE);
-    }
+        loginViewModel.messageString.observe(this, error -> {
+            if (!TextUtils.isEmpty(error)) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
 
-    @Override
-    public void showMessage(String text) {
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-    }
+        loginViewModel.authToken.observe(this, authToken -> {
+            if (!TextUtils.isEmpty(authToken)) {
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), 0);
+                sharedPreferences.edit().putString(LoftApp.AUTH_KEY, authToken).apply();
 
-    @Override
-    public void showSuccess(String token) {
-        Toast.makeText(getApplicationContext(), "User was logged successfully", Toast.LENGTH_SHORT).show();
-
-        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(mainIntent);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }
