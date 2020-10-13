@@ -9,4 +9,7 @@
     <string name="fill_fields">Please fill all fields</string>
     <string name="success_added">Income was successfully added</string>
     <string name="action_login">Войти</string>
+
+    <string name="client_secret">69219073253-bsinh5q5i2pfulf2voq79gk4jq340l1j.apps.googleusercontent.com</string>
+    <string name="client_id">jjZS9NF1MVx5nu4xM20A33F5</string>
 </resources>

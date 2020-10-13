@@ -23,9 +23,7 @@ public class LoginViewModel extends ViewModel {
         super.onCleared();
     }
 
-    void makeLogin(AuthApi authApi) {
-        String userId = "2342134234";
-
+    void makeLogin(AuthApi authApi, String userId) {
         compositeDisposable.add(authApi.makeLogin(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
