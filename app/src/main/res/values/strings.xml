@@ -12,4 +12,13 @@
 
     <string name="client_secret">69219073253-bsinh5q5i2pfulf2voq79gk4jq340l1j.apps.googleusercontent.com</string>
     <string name="client_id">jjZS9NF1MVx5nu4xM20A33F5</string>
+    <string name="title_expense">Расходы</string>
+    <string name="title_incomes">Доходы</string>
+    <string name="title_balance">Баланс</string>
+    <string name="title_dashboard">Учет бюджета</string>
+    <string name="selected">Выделено: </string>
+    <string name="delete_items_title">Вы уверены?</string>
+    <string name="delete_items_message">Вы точно хотите удалить выбранные расходы?</string>
+    <string name="action_no">Нет</string>
+    <string name="action_yes">Да</string>
 </resources>

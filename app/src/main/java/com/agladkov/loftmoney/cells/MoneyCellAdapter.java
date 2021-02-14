@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.agladkov.loftmoney.R;
@@ -24,6 +25,28 @@ public class MoneyCellAdapter extends RecyclerView.Adapter<MoneyCellAdapter.Mone
         moneyItemList.clear();
         moneyItemList.addAll(moneyItems);
 
+        notifyDataSetChanged();
+    }
+
+    public List<MoneyItem> getMoneyItemList() {
+        return moneyItemList;
+    }
+
+    public void updateItem(MoneyItem moneyItem) {
+        int itemPosition = moneyItemList.indexOf(moneyItem);
+        moneyItemList.set(itemPosition, moneyItem);
+        notifyItemChanged(itemPosition);
+    }
+
+    public void deleteSelectedItems() {
+        List<MoneyItem> selectedItems = new ArrayList<>();
+        for (MoneyItem moneyItem : moneyItemList) {
+            if (moneyItem.isSelected()) {
+                selectedItems.add(moneyItem);
+            }
+        }
+
+        moneyItemList.removeAll(selectedItems);
         notifyDataSetChanged();
     }
 
@@ -68,6 +91,9 @@ public class MoneyCellAdapter extends RecyclerView.Adapter<MoneyCellAdapter.Mone
             titleTextView.setText(moneyItem.getTitle());
             valueTextView.setText(moneyItem.getValue());
 
+            itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(),
+                moneyItem.isSelected() ? R.color.cellSelectionColor : android.R.color.white));
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -77,12 +103,14 @@ public class MoneyCellAdapter extends RecyclerView.Adapter<MoneyCellAdapter.Mone
                 }
             });
 
-            titleTextView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View view) {
                     if (moneyCellAdapterClick != null) {
-                        moneyCellAdapterClick.onTitleClick();
+                        moneyCellAdapterClick.onLongCellClick(moneyItem);
                     }
+
+                    return true;
                 }
             });
         }

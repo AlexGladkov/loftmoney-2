@@ -7,4 +7,8 @@
     <color name="expenseColor">#4A90E2</color>
     <color name="incomeColor">#7ED321</color>
     <color name="dividerColor">#F2F2F2</color>
+    <color name="accentColor">#FF9E57</color>
+    <color name="cellSelectionColor">#EFEFEF</color>
+    <color name="selectionColorPrimary">#333F59</color>
+    <color name="inactiveTextColor">#CC8BAAEF</color>
 </resources>

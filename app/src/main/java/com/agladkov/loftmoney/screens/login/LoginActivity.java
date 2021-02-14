@@ -60,20 +60,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+//        try {
+//            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+//
+//            // Signed in successfully, show authenticated UI.
+//            if (account != null) {
+//                loginViewModel.makeLogin(((LoftApp) getApplication()).authApi, account.getId());
+//            } else {
+//                Log.e("TAG", "Can't parse account");
+//            }
+//        } catch (ApiException e) {
+//            // The ApiException status code indicates the detailed failure reason.
+//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+//            Log.e("TAG", "signInResult:failed code=" + e.getStatusCode());
+//        }
 
-            // Signed in successfully, show authenticated UI.
-            if (account != null) {
-                loginViewModel.makeLogin(((LoftApp) getApplication()).authApi, account.getId());
-            } else {
-                Log.e("TAG", "Can't parse account");
-            }
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.e("TAG", "signInResult:failed code=" + e.getStatusCode());
-        }
+        loginViewModel.makeLogin(((LoftApp) getApplication()).authApi, "234234234");
     }
 
     private void configureViews() {
