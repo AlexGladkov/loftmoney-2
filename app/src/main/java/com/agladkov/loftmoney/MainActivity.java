@@ -2,6 +2,7 @@ package com.agladkov.loftmoney;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import com.agladkov.loftmoney.cells.MoneyCellAdapter;
 import com.agladkov.loftmoney.cells.MoneyItem;
 import com.agladkov.loftmoney.remote.MoneyRemoteItem;
 import com.agladkov.loftmoney.remote.MoneyResponse;
+import com.agladkov.loftmoney.screens.test.TestFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Router {
 
     private MoneyCellAdapter moneyCellAdapter = new MoneyCellAdapter();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -87,5 +89,21 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         compositeDisposable.add(disposable);
+    }
+
+    @Override
+    public void routeToTestFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.testFragmentLayoutView, new TestFragment())
+                .commit();
+    }
+
+    @Override
+    public void routeToNextFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.testFragmentLayoutView, new TestFragment())
+                .commit();
     }
 }

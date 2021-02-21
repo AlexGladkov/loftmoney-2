@@ -16,10 +16,50 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled false
+            storeFile file ("loftmoney.jks")
+            storePassword "12345678"
+            keyAlias "loftmoney"
+            keyPassword "12345678"
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("String", "URL", "\"https://verdant-violet.glitch.me/\"")
+            resValue("string", "app_name", "LoftMoney-Debug")
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            buildConfigField("String", "URL", "\"https://verdant-violet.glitch.me/\"")
+            resValue("string", "app_name", "LoftMoney")
+
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions 'super', 'target'
+
+    productFlavors {
+        bank {
+            dimension 'super'
+            resValue("String", "app_name", "Bank")
+            applicationId "ru.loftmoney.bank"
+        }
+
+        alpha {
+            dimension 'target'
+            resValue("String", "app_name", "LoftMoney-Alpha")
+            applicationId "ru.loftmoney.alpha"
+        }
+
+        beta {
+            dimension 'target'
+            resValue("String", "app_name", "LoftMoney-Beta")
+            applicationIdSuffix ".beta"
         }
     }
 
