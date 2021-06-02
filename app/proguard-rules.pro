@@ -12,7 +12,8 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
+# Uncomment this to preserve the li
+ne number information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
 
