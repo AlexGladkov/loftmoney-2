@@ -9,4 +9,6 @@
     <string name="fill_fields">Please fill all fields</string>
     <string name="success_added">Income was successfully added</string>
     <string name="action_login">Войти</string>
+    <string name="title_fragment_a">Fragment A</string>
+    <string name="title_fragment_b">Fragment B</string>
 </resources>
