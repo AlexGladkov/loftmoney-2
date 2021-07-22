@@ -7,4 +7,5 @@
     <color name="expenseColor">#4A90E2</color>
     <color name="incomeColor">#7ED321</color>
     <color name="dividerColor">#F2F2F2</color>
+    <color name="primaryTextColor">#666665</color>
 </resources>
